@@ -1,4 +1,4 @@
-import { cart } from "../data/cart.js";
+import { cart, addToCart } from "../data/cart.js";
 //why here we are importing cart from cart.js? because we want to use the cart variable in this file to add items to the cart and update the cart quantity in the header. if we don't import cart from cart.js for the product also, we won't be able to access the cart variable in this file and we won't be able to add items to the cart or update the cart quantity in the header.
 import { products } from "../data/products.js";
 let productsHTML = "";
@@ -56,42 +56,27 @@ products.forEach((product) => {
 });
 
 document.querySelector(".js-products-grid").innerHTML = productsHTML;
+
 // add btn to cart when add to cart button is clicked
+function updateCartQuantity() {
+  let cartQuantity = 0;
+  // to add product quantity in cart, loop through cart and add quantity of each item to cartQuantity
+  cart.forEach((cartItem) => {
+    cartQuantity += cartItem.quantity;
+  });
+  document.querySelector(".js-cart-quantity").innerHTML = cartQuantity;
+}
 document.querySelectorAll(".js-add-to-cart").forEach((button) => {
   button.addEventListener("click", () => {
     //  data-product-name="${product.name}">Add to Cart</button> take product name from button and log it
     // console.log(button.dataset.productName);
     const productId = button.dataset.productId;
+    addToCart(productId);
+    updateCartQuantity();
     // after adding to cart, show the added to cart message
     const addedToCartMessage = document.querySelector(
       `.js-added-to-cart-${productId}`,
     );
     addedToCartMessage.classList.add("show");
-
-    let matchingItem;
-    cart.forEach((item) => {
-      if (productId === item.productId) {
-        matchingItem = item;
-      }
-    });
-    const quantitySelector = document.querySelector(
-      `.js-product-quantity${productId}`,
-    );
-    const quantity = Number(quantitySelector.value);
-
-    if (matchingItem) {
-      matchingItem.quantity += quantity;
-    } else {
-      cart.push({
-        productId: productId,
-        quantity: quantity,
-      });
-    }
-    let cartQuantity = 0;
-    // to add product quantity in cart, loop through cart and add quantity of each item to cartQuantity
-    cart.forEach((item) => {
-      cartQuantity += item.quantity;
-    });
-    document.querySelector(".js-cart-quantity").innerHTML = cartQuantity;
   });
 });
