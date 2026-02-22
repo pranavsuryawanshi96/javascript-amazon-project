@@ -1,6 +1,8 @@
 import { cart, addToCart } from "../data/cart.js";
+import { formatCurrency } from "./utils/money.js";
 //why here we are importing cart from cart.js? because we want to use the cart variable in this file to add items to the cart and update the cart quantity in the header. if we don't import cart from cart.js for the product also, we won't be able to access the cart variable in this file and we won't be able to add items to the cart or update the cart quantity in the header.
 import { products } from "../data/products.js";
+import { formatCurrency } from "../utils/money.js";
 let productsHTML = "";
 products.forEach((product) => {
   productsHTML += `
@@ -24,7 +26,7 @@ products.forEach((product) => {
             <div class="product-rating-count link-primary">${product.rating.count}</div>
           </div>
 
-          <div class="product-price">${(product.priceCents / 100).toFixed(2)}</div>
+          <div class="product-price">${formatCurrency(product.priceCents)}</div>
 
           <div class="product-quantity-container">
             <select class="js-product-quantity${product.id}">
