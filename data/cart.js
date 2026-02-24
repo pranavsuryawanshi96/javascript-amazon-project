@@ -48,3 +48,16 @@ export function removeFromCart(productId) {
   cart = newCart;
   saveStorage();
 }
+export function updateCartQuantity() {
+  let cartQuantity = 0;
+  // to add product quantity in cart, loop through cart and add quantity of each item to cartQuantity
+  cart.forEach((cartItem) => {
+    cartQuantity += cartItem.quantity;
+  });
+  const quantityElement = document.querySelector(".js-cart-quantity");
+
+  if (!quantityElement) return;
+
+  quantityElement.innerHTML = cartQuantity;
+}
+updateCartQuantity();

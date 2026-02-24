@@ -1,6 +1,13 @@
 import { cart, removeFromCart } from "../data/cart.js";
 import { products } from "../data/products.js";
 import { formatCurrency } from "../utils/money.js";
+import { updateCartQuantity } from "../data/cart.js";
+// import from external library of date online without scrips tag in html, we can import it here and use it in this file
+import dayjs from "https://unpkg.com/supersimpledev@8.5.0/dayjs/esm/index.js";
+// using external library of date
+const today = dayjs();
+const deliveryDate = today.add(7, "days");
+deliveryDate.format("dddd, MMMM D");
 // to combine html together create a variable
 let cartSummeryHTML = "";
 cart.forEach((cartItem) => {
@@ -31,7 +38,10 @@ cart.forEach((cartItem) => {
                 <div class="product-price">$${formatCurrency(matchingProduct.priceCents)}</div>
                 <div class="product-quantity">
                   <span> Quantity: <span class="quantity-label">${cartItem.quantity}</span> </span>
-                  <span class="update-quantity-link link-primary">
+                  <span class="update-quantity-link link-primary js-update-link"
+                  data-product-id="${matchingProduct.id}">
+                  <input class="quantity-input"/>
+                  <span class="save-quantity-link">Save</span>
                     Update
                   </span>
                   <span class="delete-quantity-link link-primary js-delete-link" data-product-id="${matchingProduct.id}">
@@ -42,7 +52,7 @@ cart.forEach((cartItem) => {
 
               <div class="delivery-options">
                 <div class="delivery-options-title">
-                  Choose a delivery option:
+                  Choose a delivery option: 
                 </div>
                 <div class="delivery-option">
                   <input
@@ -95,5 +105,9 @@ document.querySelectorAll(".js-delete-link").forEach((link) => {
       `.js-cart-item-container-${productId}`,
     );
     container.remove();
+    container.classList.add("is-editing-quantity");
+    updateCartQuantity();
   });
 });
+
+updateCartQuantity();
