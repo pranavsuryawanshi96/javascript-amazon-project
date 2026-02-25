@@ -10,32 +10,33 @@ const today = dayjs();
 const deliveryDate = today.add(7, "days");
 deliveryDate.format("dddd, MMMM D");
 // to combine html together create a variable
-let cartSummeryHTML = "";
-cart.forEach((cartItem) => {
-  // we have to get the product details for each cart item, so we need to find the product in the products array that matches the productId in the cart item
-  const productID = cartItem.productId;
-  // to save the result and loop to products array, we need to create a variable to save the matching product
-  let matchingProduct;
-  // here we can check id property equal productId in cart item, if it is then we can save the product in the variable matchingProduct
-  products.forEach((product) => {
-    if (product.id === productID) {
-      matchingProduct = product;
-    }
-  });
-  // Step 1: Get delivery option ID from cart
-  const deliveryOptionID = cartItem.deliveryOptionID;
-  // Step 2: Create variable to store matched object
-  let matchingDeliveryOption;
-  // Step 3: Loop through deliveryOption array
-  deliveryOption.forEach((option) => {
-    if (option.id === deliveryOptionID) {
-      matchingDeliveryOption = option;
-    }
-  });
-  const today = dayjs();
-  const deliveryDate = today.add(matchingDeliveryOption.deliveryDays, "days");
-  const dateString = deliveryDate.format("dddd, MMMM D");
-  cartSummeryHTML += `
+function renderOrderSummary() {
+  let cartSummeryHTML = "";
+  cart.forEach((cartItem) => {
+    // we have to get the product details for each cart item, so we need to find the product in the products array that matches the productId in the cart item
+    const productID = cartItem.productId;
+    // to save the result and loop to products array, we need to create a variable to save the matching product
+    let matchingProduct;
+    // here we can check id property equal productId in cart item, if it is then we can save the product in the variable matchingProduct
+    products.forEach((product) => {
+      if (product.id === productID) {
+        matchingProduct = product;
+      }
+    });
+    // Step 1: Get delivery option ID from cart
+    const deliveryOptionID = cartItem.deliveryOptionID;
+    // Step 2: Create variable to store matched object
+    let matchingDeliveryOption;
+    // Step 3: Loop through deliveryOption array
+    deliveryOption.forEach((option) => {
+      if (option.id === deliveryOptionID) {
+        matchingDeliveryOption = option;
+      }
+    });
+    const today = dayjs();
+    const deliveryDate = today.add(matchingDeliveryOption.deliveryDays, "days");
+    const dateString = deliveryDate.format("dddd, MMMM D");
+    cartSummeryHTML += `
      <div class="cart-item-container js-cart-item-container-${matchingProduct.id}">
             <div class="delivery-date">Delivery date: ${dateString}</div>
 
@@ -75,22 +76,22 @@ cart.forEach((cartItem) => {
           </div>    
 
     `;
-});
-function deliveryOptionsHTML(matchingProduct) {
-  let html = "";
-  deliveryOption.forEach((deliveryOption, cartItem) => {
-    const today = dayjs();
-    const deliveryDate = today.add(deliveryOption.deliveryDays, "days");
-    const dateString = deliveryDate.format("dddd, MMMM D");
+  });
+  function deliveryOptionsHTML(matchingProduct) {
+    let html = "";
+    deliveryOption.forEach((deliveryOption, cartItem) => {
+      const today = dayjs();
+      const deliveryDate = today.add(deliveryOption.deliveryDays, "days");
+      const dateString = deliveryDate.format("dddd, MMMM D");
 
-    const priceString =
-      deliveryOption.priceCents === 0
-        ? "FREE"
-        : `$${formatCurrency(deliveryOption.priceCents)}
+      const priceString =
+        deliveryOption.priceCents === 0
+          ? "FREE"
+          : `$${formatCurrency(deliveryOption.priceCents)}
         - `;
-    const isChecked = deliveryOption.id === cartItem.deliveryOptionID;
+      const isChecked = deliveryOption.id === cartItem.deliveryOptionID;
 
-    html += `<div class="delivery-option js-delivery-option
+      html += `<div class="delivery-option js-delivery-option
     data-product-id="${matchingProduct.id}
     data-delivery-option-id="${deliveryOption.id}
     ">
@@ -106,30 +107,33 @@ function deliveryOptionsHTML(matchingProduct) {
                   </div>
                   </div>
     `;
+    });
+    return html;
+  }
+  // to load the html in the page of product
+  document.querySelector(".js-order-summary").innerHTML = cartSummeryHTML;
+
+  document.querySelectorAll(".js-delete-link").forEach((link) => {
+    link.addEventListener("click", () => {
+      const productId = link.dataset.productId;
+      removeFromCart(productId);
+      const container = document.querySelector(
+        `.js-cart-item-container-${productId}`,
+      );
+      container.remove();
+      container.classList.add("is-editing-quantity");
+      updateCartQuantity();
+    });
   });
-  return html;
+
+  updateCartQuantity();
+
+  document.querySelectorAll(".js-delivery-option").forEach((el) => {
+    el.addEventListener("click", () => {
+      const { productID, deliveryOptionID } = el.dataset;
+      updateDeliveryOption(productID, deliveryOptionID);
+      renderOrderSummary();
+    });
+  });
 }
-// to load the html in the page of product
-document.querySelector(".js-order-summary").innerHTML = cartSummeryHTML;
-
-document.querySelectorAll(".js-delete-link").forEach((link) => {
-  link.addEventListener("click", () => {
-    const productId = link.dataset.productId;
-    removeFromCart(productId);
-    const container = document.querySelector(
-      `.js-cart-item-container-${productId}`,
-    );
-    container.remove();
-    container.classList.add("is-editing-quantity");
-    updateCartQuantity();
-  });
-});
-
-updateCartQuantity();
-
-document.querySelectorAll(".js-delivery-option").forEach((el) => {
-  el.addEventListener("click", () => {
-    const { productID, deliveryOptionID } = el.dataset;
-    updateDeliveryOption(productID, deliveryOptionID);
-  });
-});
+renderOrderSummary();
