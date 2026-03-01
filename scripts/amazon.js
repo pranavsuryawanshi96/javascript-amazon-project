@@ -25,7 +25,7 @@ products.forEach((product) => {
             <div class="product-rating-count link-primary">${product.rating.count}</div>
           </div>
 
-          <div class="product-price">${product.getPrice()}</div>
+          <div class="product-price">$${product.getPrice()}</div>
 
           <div class="product-quantity-container">
             <select class="js-product-quantity${product.id}">
@@ -41,6 +41,8 @@ products.forEach((product) => {
               <option value="10">10</option>
             </select>
           </div>
+
+          ${product.extraInfoHTML()}
 
           <div class="product-spacer"></div>
 
