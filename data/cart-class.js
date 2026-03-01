@@ -1,14 +1,15 @@
 class Cart {
+  // to  make private use # or number privateproperty
   cartItems;
-  localStorageKey;
+  #localStorageKey;
   // constructor
   constructor(loadFromStorageKey) {
-    this.loadFromStorageKey = localStorageKey;
-    this.loadFromStorage();
-    // cart.updateCartQuantity()
+    this.#localStorageKey = loadFromStorageKey;
+    this.#loadFromStorage();
+    this.updateCartQuantity();
   }
-  loadFromStorage() {
-    this.cartItems = JSON.parse(localStorage.getItem(this.localStorageKey));
+   #loadFromStorage() {
+    this.cartItems = JSON.parse(localStorage.getItem(this.#localStorageKey));
     if (!this.cartItems) {
       this.cartItems = [
         {
@@ -26,7 +27,7 @@ class Cart {
   }
 
   saveStorage() {
-    localStorage.setItem(this.localStorageKey, JSON.stringify(this.cartItems));
+    localStorage.setItem(this.#localStorageKey, JSON.stringify(this.cartItems));
   }
 
   addToCart(productId) {
@@ -103,4 +104,4 @@ class Cart {
 }
 
 const cart = new Cart("cart-oop");
-const businessCart = Cart("cart-business");
+const businessCart = new Cart("cart-business");
