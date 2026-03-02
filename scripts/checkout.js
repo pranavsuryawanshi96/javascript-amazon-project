@@ -1,5 +1,5 @@
 import { renderOrderSummary } from "./checkout/orderSummary.js";
-import { loadProducts } from "../data/products.js";
+import { loadProducts, loadProductsFetch } from "../data/products.js";
 import { loadCart } from "../data/cart.js";
 // import "../data/cart-oop.js";
 // import "../data/cart-class.js";
@@ -7,11 +7,7 @@ import { loadCart } from "../data/cart.js";
 // take dat from backend api by loadProducts
 
 Promise.all([
-  new Promise((resolve) => {
-    loadProducts(() => {
-      resolve("value");
-    });
-  }),
+  loadProductsFetch(),
   new Promise((resolve) => {
     //once loadCart finish runs the fn
     loadCart(() => {
