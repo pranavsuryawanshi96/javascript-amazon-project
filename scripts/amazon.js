@@ -1,10 +1,13 @@
 import { cart, addToCart, updateCartQuantity } from "../data/cart.js";
 import { formatCurrency } from "../utils/money.js";
 //why here we are importing cart from cart.js? because we want to use the cart variable in this file to add items to the cart and update the cart quantity in the header. if we don't import cart from cart.js for the product also, we won't be able to access the cart variable in this file and we won't be able to add items to the cart or update the cart quantity in the header.
-import { products } from "../data/products.js";
-let productsHTML = "";
-products.forEach((product) => {
-  productsHTML += `
+import { products, loadProducts } from "../data/products.js";
+loadProducts(renderProductsGrid);
+
+function renderProductsGrid() {
+  let productsHTML = "";
+  products.forEach((product) => {
+    productsHTML += `
     <div class="product-container">
           <div class="product-image-container">
             <img
@@ -56,23 +59,24 @@ products.forEach((product) => {
           data-product-id="${product.id}">Add to Cart</button>
         </div>
     `;
-});
-
-document.querySelector(".js-products-grid").innerHTML = productsHTML;
-
-// add btn to cart when add to cart button is clicked
-updateCartQuantity();
-document.querySelectorAll(".js-add-to-cart").forEach((button) => {
-  button.addEventListener("click", () => {
-    //  data-product-name="${product.name}">Add to Cart</button> take product name from button and log it
-    // console.log(button.dataset.productName);
-    const productId = button.dataset.productId;
-    addToCart(productId);
-    updateCartQuantity();
-    // after adding to cart, show the added to cart message
-    const addedToCartMessage = document.querySelector(
-      `.js-added-to-cart-${productId}`,
-    );
-    addedToCartMessage.classList.add("show");
   });
-});
+
+  document.querySelector(".js-products-grid").innerHTML = productsHTML;
+
+  // add btn to cart when add to cart button is clicked
+  updateCartQuantity();
+  document.querySelectorAll(".js-add-to-cart").forEach((button) => {
+    button.addEventListener("click", () => {
+      //  data-product-name="${product.name}">Add to Cart</button> take product name from button and log it
+      // console.log(button.dataset.productName);
+      const productId = button.dataset.productId;
+      addToCart(productId);
+      updateCartQuantity();
+      // after adding to cart, show the added to cart message
+      const addedToCartMessage = document.querySelector(
+        `.js-added-to-cart-${productId}`,
+      );
+      addedToCartMessage.classList.add("show");
+    });
+  });
+}
